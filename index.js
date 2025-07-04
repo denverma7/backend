@@ -13,7 +13,9 @@ app.use(express.json());
 
 app.use(
     cors({
-        origin: "*",
+        origin: "https://to-do-frontend-git-main-denverma7-gmailcoms-projects.vercel.app",
+        methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
     })
 )
 
