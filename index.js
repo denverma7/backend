@@ -1,33 +1,150 @@
+// require('dotenv').config();
+
+// const express = require('express');
+// const cors = require("cors")
+// const app = express();
+// const mongoose = require('mongoose')
+// const jwt = require('jsonwebtoken')
+// const bcrypt = require('bcryptjs')
+// const PORT = process.env.PORT || 8080
+// const MONGO_URI = process.env.MONGO_URI;
+
+// app.use(express.json());
+
+// app.use(
+//     cors({
+//         origin: "https://to-do-frontend-git-main-denverma7-gmailcoms-projects.vercel.app",
+//         methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+//         allowedHeaders: ["Content-Type", "Authorization"]
+//     })
+// )
+
+// mongoose.connect(MONGO_URI, {
+//     // useNewUrlParser: true,
+//     // useUnifiedTopology: true,   
+// });
+
+// const userSchema = new mongoose.Schema ({
+//     username: String,
+//     password: String,
+// })
+// const User = mongoose.model("User", userSchema);
+
+// const taskSchema = new mongoose.Schema({
+//     text: String,
+//     status: String,
+//     priority: String,
+//     userId: mongoose.Schema.Types.ObjectId,
+// }); 
+
+// const Task = mongoose.model("Task", taskSchema);
+
+// app.post("/register", async(req, res) => {
+//     const{username, password} = req.body;
+//     const hashed = await bcrypt.hash(password, 10);
+//     const user = new User ({ username, password: hashed });
+//     await user.save();
+//     res.json({ message: "User has been registered"});
+// });
+
+// app.post("/login", async(req, res) =>{
+//     const{username, password} = req.body;
+//     const user = await User.findOne({username})
+//     if(!user || !(await bcrypt.compare(password, user.password))){
+//         return res.status(401).json({message: "Invalid Credentials"});
+//     }
+//     const token = jwt.sign({userId:user._id}, 'secret', {expiresIn: '1h'});
+//     res.json({token});
+// });
+
+// const authMiddleware=(req, res, next) =>{
+//     const token = req.header("Authorization")?.replace("Bearer ", "");
+//     if(!token) return res.status(401).json({message: "No token"});  
+//     try{
+//         const decode = jwt.verify(token, 'secret');
+//         req.userId = decode.userId;
+//         next();
+//     }catch(err){
+//         res.status(401).json({message: "Invalid Token"});
+//     }
+// };
+
+// //Get Task request
+// app.get("/tasks", authMiddleware, async (req, res) => {
+//     const tasks = await Task.find({userId: req.userId});
+//     res.json(tasks);
+// })
+
+// //Post task request
+// app.post("/tasks", authMiddleware, async(req, res) => {
+//     const task = new Task({...req.body, userId: req.userId});
+//     await task.save();
+//     res.json(task)
+// })
+
+// //Delete task request
+// app.delete("/tasks/:id", authMiddleware, async (req, res) => {
+//     await Task.findOneAndDelete({_id: req.params.id, userId: req.userId });
+//     res.json({message: "Task Deleted"});
+// });
+
+// // Update status of the task
+// app.patch("/tasks/:id/status", authMiddleware, async(req, res) =>{
+//     const {status} = req.body;
+//     const task = await Task.findOneAndUpdate(
+//         {_id: req.params.id, userId:req.userId},
+//         { status },
+//         { new: true }
+//     );
+//     if (!task) return res.status(404).json({ message: "Task not found"});
+//     res.json(task);
+// });
+
+// //Update task priority
+// app.patch("/tasks/:id/priority", authMiddleware, async (req, res) => {
+//     const {priority} = req.body;
+//     const task = await Task.findOneAndUpdate(
+//         {_id: req.params.id, userId: req.userId},
+//         {priority},
+//         {new:true}
+//     );
+//     if (!task) return res.status(404).json({ message: "Task not found"});
+//     res.json(task);
+
+// });
+
+// app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))
+
 require('dotenv').config();
 
-const express = require('express');
-const cors = require("cors")
+const express Sara = require('express');
+const cors = require("cors");
 const app = express();
-const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcryptjs')
-const PORT = process.env.PORT || 8080
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const PORT = process.env.PORT || 8080;
 const MONGO_URI = process.env.MONGO_URI;
 
 app.use(express.json());
-
 app.use(
     cors({
         origin: "https://to-do-frontend-git-main-denverma7-gmailcoms-projects.vercel.app",
         methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
     })
-)
+);
+app.options("*", cors());
 
 mongoose.connect(MONGO_URI, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,   
 });
 
-const userSchema = new mongoose.Schema ({
+const userSchema = new mongoose.Schema({
     username: String,
     password: String,
-})
+});
 const User = mongoose.model("User", userSchema);
 
 const taskSchema = new mongoose.Schema({
@@ -39,78 +156,77 @@ const taskSchema = new mongoose.Schema({
 
 const Task = mongoose.model("Task", taskSchema);
 
-app.post("/register", async(req, res) => {
-    const{username, password} = req.body;
+app.post("/register", async (req, res) => {
+    const { username, password } = req.body;
     const hashed = await bcrypt.hash(password, 10);
-    const user = new User ({ username, password: hashed });
+    const user = new User({ username, password: hashed });
     await user.save();
-    res.json({ message: "User has been registered"});
+    res.json({ message: "User has been registered" });
 });
 
-app.post("/login", async(req, res) =>{
-    const{username, password} = req.body;
-    const user = await User.findOne({username})
-    if(!user || !(await bcrypt.compare(password, user.password))){
-        return res.status(401).json({message: "Invalid Credentials"});
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(401).json({ message: "Invalid Credentials" });
     }
-    const token = jwt.sign({userId:user._id}, 'secret', {expiresIn: '1h'});
-    res.json({token});
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
+    res.json({ token });
 });
 
-const authMiddleware=(req, res, next) =>{
+const authMiddleware = (req, res, next) => {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    if(!token) return res.status(401).json({message: "No token"});  
-    try{
-        const decode = jwt.verify(token, 'secret');
+    if (!token) return res.status(401).json({ message: "No token" });  
+    try {
+        const decode = jwt.verify(token, process.env.JWT_SECRET || 'secret');
         req.userId = decode.userId;
         next();
-    }catch(err){
-        res.status(401).json({message: "Invalid Token"});
+    } catch (err) {
+        res.status(401).json({ message: "Invalid Token" });
     }
 };
 
-//Get Task request
+// Get Task request
 app.get("/tasks", authMiddleware, async (req, res) => {
-    const tasks = await Task.find({userId: req.userId});
+    const tasks = await Task.find({ userId: req.userId });
     res.json(tasks);
-})
+});
 
-//Post task request
-app.post("/tasks", authMiddleware, async(req, res) => {
-    const task = new Task({...req.body, userId: req.userId});
+// Post task request
+app.post("/tasks", authMiddleware, async (req, res) => {
+    const task = new Task({ ...req.body, userId: req.userId });
     await task.save();
-    res.json(task)
-})
+    res.json(task);
+});
 
-//Delete task request
+// Delete task request
 app.delete("/tasks/:id", authMiddleware, async (req, res) => {
-    await Task.findOneAndDelete({_id: req.params.id, userId: req.userId });
-    res.json({message: "Task Deleted"});
+    await Task.findOneAndDelete({ _id: req.params.id, userId: req.userId });
+    res.json({ message: "Task Deleted" });
 });
 
 // Update status of the task
-app.patch("/tasks/:id/status", authMiddleware, async(req, res) =>{
-    const {status} = req.body;
+app.patch("/tasks/:id/status", authMiddleware, async (req, res) => {
+    const { status } = req.body;
     const task = await Task.findOneAndUpdate(
-        {_id: req.params.id, userId:req.userId},
+        { _id: req.params.id, userId: req.userId },
         { status },
         { new: true }
     );
-    if (!task) return res.status(404).json({ message: "Task not found"});
+    if (!task) return res.status(404).json({ message: "Task not found" });
     res.json(task);
 });
 
-//Update task priority
+// Update task priority
 app.patch("/tasks/:id/priority", authMiddleware, async (req, res) => {
-    const {priority} = req.body;
+    const { priority } = req.body;
     const task = await Task.findOneAndUpdate(
-        {_id: req.params.id, userId: req.userId},
-        {priority},
-        {new:true}
+        { _id: req.params.id, userId: req.userId },
+        { priority },
+        { new: true }
     );
-    if (!task) return res.status(404).json({ message: "Task not found"});
+    if (!task) return res.status(404).json({ message: "Task not found" });
     res.json(task);
-
 });
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
