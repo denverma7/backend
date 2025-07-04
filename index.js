@@ -126,12 +126,27 @@ const bcrypt = require('bcryptjs');
 const PORT = process.env.PORT || 8080;
 const MONGO_URI = process.env.MONGO_URI;
 
-app.use(express.json());
+// app.use(express.json());
+// app.use(
+//     cors({
+//         origin: "https://to-do-frontend-git-main-denverma7-gmailcoms-projects.vercel.app",
+//         methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+//         allowedHeaders: ["Content-Type", "Authorization"]
+//     })
+// );
+// app.options("*", cors());
+
+const cors = require("cors");
+
 app.use(
     cors({
-        origin: "https://to-do-frontend-git-main-denverma7-gmailcoms-projects.vercel.app",
+        origin: [
+            "https://to-do-frontend-git-main-denverma7-gmailcoms-projects.vercel.app",
+            "https://to-do-frontend-beige.vercel.app" // Include if you’re using this URL
+        ],
         methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"]
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: false // Set to true if you need to send cookies or credentials
     })
 );
 app.options("*", cors());
